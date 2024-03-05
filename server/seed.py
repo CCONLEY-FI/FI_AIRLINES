@@ -2,7 +2,7 @@ from extensions import db
 from app import app
 from models import Flight, Trip, User
 from datetime import datetime
-from bcrypt import bcrypt
+import bcrypt
 
 
 def seed_data():
@@ -12,7 +12,7 @@ def seed_data():
     db.session.query(User).delete()
 
     # Add new records
-    hashed_password = bcrypt.generate_password_hash('password').decode('utf-8')
+    hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
     user1 = User(username="John Doe", password=hashed_password)
     user2 = User(username="Jane Smith", password=hashed_password)
 
