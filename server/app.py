@@ -4,10 +4,9 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from extensions import db  # Import db from extensions.py
 from flask_bcrypt import Bcrypt
-
 import logging
 # Ensure models are imported after db to avoid uninitialized db usage
-from models import Flight, Itinerary, User
+from models import Flight, Trip, User
 
 
 app = Flask(__name__)
@@ -22,6 +21,7 @@ migrate = Migrate(app, db)
 CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
+
 
 @app.route('/flights', methods=['GET'])
 def get_flights():
@@ -62,41 +62,41 @@ def delete_flight(id):
     return jsonify({}), 204
 
 
-@app.route('/itineraries', methods=['GET'])
-def get_itineraries():
-    itineraries = Itinerary.query.all()
-    return jsonify([itinerary.to_dict() for itinerary in itineraries])
+@app.route('/trips', methods=['GET'])
+def get_trips():
+    trips = Trip.query.all()
+    return jsonify([trip.to_dict() for trip in trips])
 
 
-@app.route('/itineraries', methods=['POST'])
-def create_itinerary():
+@app.route('/trips', methods=['POST'])
+def create_trip():
     data = request.get_json()
-    itinerary = Itinerary(**data)
-    db.session.add(itinerary)
+    trip = Trip(**data)
+    db.session.add(trip)
     db.session.commit()
-    return jsonify(itinerary.to_dict()), 201
+    return jsonify(trip.to_dict()), 201
 
 
-@app.route('/itineraries/<int:id>', methods=['GET'])
-def get_itinerary(id):
-    itinerary = Itinerary.query.get_or_404(id)
-    return jsonify(itinerary.to_dict())
+@app.route('/trips/<int:id>', methods=['GET'])
+def get_trip(id):
+    trip = Trip.query.get_or_404(id)
+    return jsonify(trip.to_dict())
 
 
-@app.route('/itineraries/<int:id>', methods=['PUT'])
-def update_itinerary(id):
-    itinerary = Itinerary.query.get_or_404(id)
+@app.route('/trips/<int:id>', methods=['PUT'])
+def update_trip(id):
+    trip = Trip.query.get_or_404(id)
     data = request.get_json()
     for key, value in data.items():
-        setattr(itinerary, key, value)
+        setattr(trip, key, value)
     db.session.commit()
-    return jsonify(itinerary.to_dict())
+    return jsonify(trip.to_dict())
 
 
-@app.route('/itineraries/<int:id>', methods=['DELETE'])
-def delete_itinerary(id):
-    itinerary = Itinerary.query.get_or_404(id)
-    db.session.delete(itinerary)
+@app.route('/trips/<int:id>', methods=['DELETE'])
+def delete_trip(id):
+    trip = Trip.query.get_or_404(id)
+    db.session.delete(trip)
     db.session.commit()
     return jsonify({}), 204
 
@@ -112,7 +112,8 @@ def create_user():
     data = request.get_json()
     if 'username' not in data or 'password' not in data:
         abort(400, description="Missing username or password")
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    hashed_password = bcrypt.generate_password_hash(
+        data['password']).decode('utf-8')
     data['password'] = hashed_password
     user = User(**data)
     db.session.add(user)

@@ -1,13 +1,14 @@
 from extensions import db
 from app import app
-from models import Flight, Itinerary, User
+from models import Flight, Trip, User
 from datetime import datetime
 from bcrypt import bcrypt
+
 
 def seed_data():
     # Delete existing data
     db.session.query(Flight).delete()
-    db.session.query(Itinerary).delete()
+    db.session.query(Trip).delete()
     db.session.query(User).delete()
 
     # Add new records
@@ -23,13 +24,14 @@ def seed_data():
     db.session.commit()
 
     # Now, use the actual instances of users and flights to create itineraries
-    itinerary1 = Itinerary(user_id=user1.id, flight_id=flight1.id)
-    itinerary2 = Itinerary(user_id=user2.id, flight_id=flight2.id)
+    trip1 = Trip(user_id=user1.id, flight_id=flight1.id)
+    trip2 = Trip(user_id=user2.id, flight_id=flight2.id)
 
-    db.session.add_all([itinerary1, itinerary2])
+    db.session.add_all([trip1, trip2])
     db.session.commit()
 
     print("Database seeded!")
+
 
 if __name__ == "__main__":
     with app.app_context():

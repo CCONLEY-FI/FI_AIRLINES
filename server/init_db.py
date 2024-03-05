@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Itinerary, Flight
+from models import User, Trip, Flight
 
 
 # Ensure you import db from your app or models file, depending on where it's initialized
