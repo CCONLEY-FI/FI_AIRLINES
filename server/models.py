@@ -34,7 +34,7 @@ class Itinerary(db.Model, SerializerMixin):
             raise ValueError(f"Itinerary must have a {key}.")
         return value
 
-class User(db.Model):
+class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)

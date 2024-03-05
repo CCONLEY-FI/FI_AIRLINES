@@ -11,6 +11,9 @@ const LoginForm = () => {
     const handleRegister = () => {
         navigate("/register")
     }
+    function handleSignIn(){
+        navigate("/frontpage", {replace: true})
+    }
     return (
         <div className='loginForm'>
             <form action=''>
@@ -25,7 +28,7 @@ const LoginForm = () => {
 
                 </div>
                 <div className='input-field'>
-                    <input type='submit' value='Login'/>
+                    <input type='submit' value='Login' onClick={handleSignIn}/>
                 </div>
                 <div className='remember-me-forget'>
                     <label><input type="checkbox"/>Remember Me</label>
