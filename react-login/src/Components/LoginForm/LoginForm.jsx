@@ -16,29 +16,8 @@ const LoginForm = ({onLogin}) => {
     const handleRegister = () => {
         navigate("/register")
     }
-    function handleSignIn(e){
-        e.preventDefault()
-        fetch('/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({username: username, password: password})
-        })
-        .then(res => {
-            if (res.ok){
-                res.json()
-                .then((username, password) => onLogin(username, password))
-            }
-        })
-        .then(data => {
-            console.log(data);
-            navigate("/frontpage"); 
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            setError("Login failed. Please try again.");
-        })
+    function handleSignIn(){
+        navigate("/home", {replace: true})
     }
 
     return (
