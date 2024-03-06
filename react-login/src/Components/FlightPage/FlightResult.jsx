@@ -5,7 +5,7 @@ const FlightResult = () => {
       <div>
         
         <div className='flight'>
-          please show me flights that i can track or take to follow the people i tracked
+          please show me flights that I can track or take to follow the people I tracked
         </div>
       </div>
     );
