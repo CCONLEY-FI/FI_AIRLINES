@@ -22,7 +22,7 @@ bcrypt = Bcrypt(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
 
