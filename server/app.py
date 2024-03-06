@@ -11,6 +11,7 @@ from requests.exceptions import RequestException
 from models import Flight, Trip, User
 from dotenv import load_dotenv
 from flask.views import MethodView
+from flask_classful import FlaskView, route
 
 load_dotenv()  # Take environment variables from .env.
 
