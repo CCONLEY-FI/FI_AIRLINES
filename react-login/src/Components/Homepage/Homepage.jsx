@@ -22,7 +22,7 @@ const Homepage = () => {
             <div className='input-field'>
                 <select>
                     <option value="Economy">Economy</option>
-                    <option value="Buisness">Business</option>
+                    <option value="Business">Business</option>
                     <option value="First Class">First Class</option>
                 </select>
                 {/* <input type='dropdown' placeholder='Verify Password'/> */}
