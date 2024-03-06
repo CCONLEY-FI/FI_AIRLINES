@@ -6,20 +6,25 @@ const Homepage = () => {
     
     const navigate = useNavigate();
 
-    const handleSearchFlights = (searchParams) => {
+    const handleSearchFlights = (e) => {
+        e.preventDefault(); // Prevent default form submission
+        const origin = e.target.origin.value;
+        const destination = e.target.destination.value;
+        const date = e.target.querySelector('input[type="date"]').value;
+        const flightClass = e.target.querySelector('select').value;
         navigate(
-            `/flights?origin=${searchParams.origin}&destination=${searchParams.destination}&arr_scheduled_time_arr=${searchParams.date}`
+            `/flights?origin=${origin}&destination=${destination}&date=${date}&class=${flightClass}`
         );
     };
     return (
         <div className='registerForm'>
-            <form action=''>
+            <form onSubmit={handleSearchFlights}>
                 <h1>Browse Flights</h1>
                 <div className='input-field'>
-                    <input type='text' placeholder='Origin' />
+                    <input name='origin' type='text' placeholder='Origin' />
                 </div>
                 <div className='input-field'>
-                    <input type='text' placeholder='Destination' />
+                    <input name='destination' type='text' placeholder='Destination' />
                 </div>
                 <div className='input-field'>
                     <input type='date' placeholder='Date' />
@@ -32,7 +37,7 @@ const Homepage = () => {
                     </select>
                     {/* <input type='dropdown' placeholder='Verify Password'/> */}
                 </div>
-                <button type='submit' onClick={handleSearchFlights}>
+                <button type='submit'>
                     Search Flights
                 </button>
             </form>
