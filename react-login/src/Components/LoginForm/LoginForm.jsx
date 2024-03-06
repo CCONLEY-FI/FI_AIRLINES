@@ -8,37 +8,33 @@ import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({onLogin}) => {
 
-    const [username, setUsername] = useState([]);
-    const[password, setPassword] = useState([]);
+    const [username, setUsername] = useState("");
+    const[password, setPassword] = useState("");
     const [error, setError] = useState("");
+
 
     const navigate = useNavigate()
     const handleRegister = () => {
         navigate("/register")
     }
-    function handleSignIn(e){
-        e.preventDefault()
-        fetch('/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({username: username, password: password})
-        })
-        .then(res => {
-            if (res.ok){
-                res.json()
-                .then((username, password) => onLogin(username, password))
-            }
-        })
-        .then(data => {
-            console.log(data);
-            navigate("/frontpage"); 
-        })
-        .catch(error => {
+    async function handleSignIn(e) {
+        e.preventDefault();
+        try {
+            const res = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username: username, password: password})
+            });
+            if (!res.ok) throw new Error('Login failed. Please try again.');
+            const data = await res.json();
+            onLogin(data.username, data.password);
+            navigate("/homepage");
+        } catch (error) {
             console.error('Error:', error);
             setError("Login failed. Please try again.");
-        })
+        }
     }
 
     return (

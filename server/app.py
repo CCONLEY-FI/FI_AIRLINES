@@ -1,7 +1,8 @@
 import os
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, session
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_restful import Api, Resource
 from extensions import db  # Import db from extensions.py
 from flask_bcrypt import Bcrypt
 import logging
@@ -25,7 +26,7 @@ migrate = Migrate(app, db)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
-
+ 
 @app.route('/api/flights', methods=['GET'])
 def get_flights():
     access_key = os.getenv('AVIATIONSTACK_API_KEY')  # Get API key from environment variable
@@ -166,7 +167,26 @@ def delete_user(id):
     db.session.commit()
     return jsonify({}), 204
 
+@app.route('/check_session', methods=['GET'])
+def get(self):
+        user = User.query.filter(User.id == session.get('user_id')).first()
+        if user:
+            return user.to_dict()
+        else:
+            return {'Message': '401: Not Authorized'}, 401
 
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = User.query.filter_by(username = username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return jsonify({'user': user.to_dict()})
+    else:
+        return jsonify({'error': 'Invalid username or password'})
+    
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404

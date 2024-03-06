@@ -4,8 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+python-dotenv = "*"
+flask-cors = "*"
+gunicorn = "20.1.0"
+honcho = "1.1.0"
+
 
 [dev-packages]
 
 [requires]
-python_version = "3.12"
+python_version = "3.8"
