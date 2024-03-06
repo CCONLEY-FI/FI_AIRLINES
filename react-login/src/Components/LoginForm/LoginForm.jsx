@@ -1,4 +1,4 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
 import "./LoginForm.css";
 import { FaUserAstronaut } from "react-icons/fa";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -6,24 +6,51 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const LoginForm = () => {
+const LoginForm = ({onLogin}) => {
+
+    const [username, setUsername] = useState([]);
+    const[password, setPassword] = useState([]);
+    const [error, setError] = useState("");
+
     const navigate = useNavigate()
     const handleRegister = () => {
         navigate("/register")
     }
-    function handleSignIn(){
-        navigate("/frontpage", {replace: true})
+    function handleSignIn(e){
+        e.preventDefault()
+        fetch('/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({username: username, password: password})
+        })
+        .then(res => {
+            if (res.ok){
+                res.json()
+                .then((username, password) => onLogin(username, password))
+            }
+        })
+        .then(data => {
+            console.log(data);
+            navigate("/frontpage"); 
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            setError("Login failed. Please try again.");
+        })
     }
+
     return (
         <div className='loginForm'>
             <form action=''>
                 <h1>Login</h1>
                 <div className='input-field'>
-                    <input type='text' placeholder='Username'/>
+                    <input type='text' placeholder='Username' onChange={(e) => setUsername(e.target.value)}/>
                     <FaUserAstronaut className='icon' />
                 </div>
                 <div className='input-field'>
-                    <input type='password' placeholder='Password'/>
+                    <input type='password' placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
                     <RiLockPasswordFill className='icon' />
 
                 </div>
