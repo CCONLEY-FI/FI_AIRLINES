@@ -50,7 +50,6 @@ def get_flights():
         # Handle connection errors, timeouts, etc.
         return jsonify({'error': 'API request failed', 'details': str(e)}), 503
 
-
 @app.route('/flights', methods=['POST'])
 def create_flight():
     data = request.get_json()
