@@ -5,9 +5,12 @@ from flask_migrate import Migrate
 from extensions import db  # Import db from extensions.py
 from flask_bcrypt import Bcrypt
 import logging
+import requests
 # Ensure models are imported after db to avoid uninitialized db usage
 from models import Flight, Trip, User
+from dotenv import load_dotenv
 
+load_dotenv()  # Take environment variables from .env.
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///flights.db"
@@ -22,11 +25,23 @@ CORS(app)
 
 logging.basicConfig(level=logging.DEBUG)
 
-
-@app.route('/flights', methods=['GET'])
+@app.route('/api/flights', methods=['GET'])
 def get_flights():
-    flights = Flight.query.all()
-    return jsonify([flight.to_dict() for flight in flights])
+    access_key = os.getenv('AVIATIONSTACK_API_KEY')  # Get API key from environment variable
+    if not access_key:
+        return jsonify({'error': 'API key is not set'}), 500
+
+    base_url = 'https://api.aviationstack.com/v1/flights'
+    params = {
+        'access_key': access_key,
+        # Add any other parameters you need
+    }
+    response = requests.get(base_url, params=params)
+    if response.status_code == 200:
+        data = response.json()
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Failed to fetch data from aviationstack API'}), response.status_code
 
 
 @app.route('/flights', methods=['POST'])
