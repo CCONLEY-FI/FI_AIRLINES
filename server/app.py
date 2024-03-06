@@ -50,6 +50,48 @@ def get_flights():
         # Handle connection errors, timeouts, etc.
         return jsonify({'error': 'API request failed', 'details': str(e)}), 503
 
+@app.route('/api/real-time-flight/<flight_number>', methods=['GET'])
+def get_real_time_flight(flight_number):
+    access_key = os.getenv('AVIATIONSTACK_API_KEY')
+    if not access_key:
+        return jsonify({'error': 'API key is not set'}), 500
+
+    params = {
+        'access_key': access_key,
+        'flight_number': flight_number
+    }
+    response = requests.get('https://api.aviationstack.com/v1/flights', params=params)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to fetch flight data'}), response.status_code
+
+@app.route('/api/airline/<iata_code>', methods=['GET'])
+def get_airline_info(iata_code):
+    access_key = os.getenv('AVIATIONSTACK_API_KEY')
+    params = {
+        'access_key': access_key,
+        'airline_iata': iata_code
+    }
+    response = requests.get('https://api.aviationstack.com/v1/airlines', params=params)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to fetch airline information'}), response.status_code
+
+@app.route('/api/airport/<iata_code>', methods=['GET'])
+def get_airport_info(iata_code):
+    access_key = os.getenv('AVIATIONSTACK_API_KEY')
+    params = {
+        'access_key': access_key,
+        'iata_code': iata_code
+    }
+    response = requests.get('https://api.aviationstack.com/v1/airports', params=params)
+    if response.status_code == 200:
+        return jsonify(response.json())
+    else:
+        return jsonify({'error': 'Failed to fetch airport information'}), response.status_code
+
 @app.route('/flights', methods=['POST'])
 def create_flight():
     data = request.get_json()
@@ -58,12 +100,10 @@ def create_flight():
     db.session.commit()
     return jsonify(flight.to_dict()), 201
 
-
 @app.route('/flights/<int:id>', methods=['GET'])
 def get_flight(id):
     flight = Flight.query.get_or_404(id)
     return jsonify(flight.to_dict())
-
 
 @app.route('/flights/<int:id>', methods=['PUT'])
 def update_flight(id):
@@ -74,7 +114,6 @@ def update_flight(id):
     db.session.commit()
     return jsonify(flight.to_dict())
 
-
 @app.route('/flights/<int:id>', methods=['DELETE'])
 def delete_flight(id):
     flight = Flight.query.get_or_404(id)
@@ -82,12 +121,10 @@ def delete_flight(id):
     db.session.commit()
     return jsonify({}), 204
 
-
 @app.route('/trips', methods=['GET'])
 def get_trips():
     trips = Trip.query.all()
     return jsonify([trip.to_dict() for trip in trips])
-
 
 @app.route('/trips', methods=['POST'])
 def create_trip():
@@ -97,12 +134,10 @@ def create_trip():
     db.session.commit()
     return jsonify(trip.to_dict()), 201
 
-
 @app.route('/trips/<int:id>', methods=['GET'])
 def get_trip(id):
     trip = Trip.query.get_or_404(id)
     return jsonify(trip.to_dict())
-
 
 @app.route('/trips/<int:id>', methods=['PUT'])
 def update_trip(id):
@@ -113,7 +148,6 @@ def update_trip(id):
     db.session.commit()
     return jsonify(trip.to_dict())
 
-
 @app.route('/trips/<int:id>', methods=['DELETE'])
 def delete_trip(id):
     trip = Trip.query.get_or_404(id)
@@ -121,12 +155,10 @@ def delete_trip(id):
     db.session.commit()
     return jsonify({}), 204
 
-
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
     return jsonify([user.to_dict() for user in users])
-
 
 @app.route('/users', methods=['POST'])
 def create_user():
@@ -141,12 +173,10 @@ def create_user():
     db.session.commit()
     return jsonify(user.to_dict()), 201
 
-
 @app.route('/users/<int:id>', methods=['GET'])
 def get_user(id):
     user = User.query.get_or_404(id)
     return jsonify(user.to_dict())
-
 
 @app.route('/users/<int:id>', methods=['PUT'])
 def update_user(id):
@@ -157,7 +187,6 @@ def update_user(id):
     db.session.commit()
     return jsonify(user.to_dict())
 
-
 @app.route('/users/<int:id>', methods=['DELETE'])
 def delete_user(id):
     user = User.query.get_or_404(id)
@@ -165,11 +194,9 @@ def delete_user(id):
     db.session.commit()
     return jsonify({}), 204
 
-
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404
-
 
 if __name__ == "__main__":
     app.run(debug=True)
