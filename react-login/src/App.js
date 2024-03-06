@@ -9,19 +9,19 @@ import NavBar from './Components/NavBar';
 
 
 
+function App() {
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
+  const router = createBrowserRouter(
+    createRoutesFromElements(
     <Route path="/" element={<NavBar />}>
       <Route index element={<LoginForm />}/>
       <Route path='/register' element={<RegisterForm />}/>
-      <Route path='/frontpage' element={<Homepage />}/>
+      <Route path='/home' element={<Homepage />}/>
       <Route path='/flights' element={<FlightPage />}/>
     </Route>
   )
-)
+  )
 
-function App() {
   return (
     <div>
      <RouterProvider router={router} />

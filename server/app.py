@@ -5,12 +5,16 @@ from flask_migrate import Migrate
 from extensions import db  # Import db from extensions.py
 from flask_bcrypt import Bcrypt
 import logging
+import requests
+from requests.exceptions import RequestException
 # Ensure models are imported after db to avoid uninitialized db usage
 from models import Flight, Trip, User
+from dotenv import load_dotenv
 
+load_dotenv()  # Take environment variables from .env.
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///flights.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "sqlite:///flights.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
@@ -18,15 +22,33 @@ bcrypt = Bcrypt(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
 
-
-@app.route('/flights', methods=['GET'])
+@app.route('/api/flights', methods=['GET'])
 def get_flights():
-    flights = Flight.query.all()
-    return jsonify([flight.to_dict() for flight in flights])
+    access_key = os.getenv('AVIATIONSTACK_API_KEY')  # Get API key from environment variable
+    if not access_key:
+        return jsonify({'error': 'API key is not set'}), 500
+
+    base_url = 'https://api.aviationstack.com/v1/flights'
+    params = {
+        'access_key': access_key,
+        # Add any other parameters you need
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        # Check for HTTP codes other than 200
+        if response.status_code != 200:
+            # You can be more specific with each status code if needed
+            return jsonify({'error': 'Failed to fetch data from aviationstack API', 'status_code': response.status_code}), response.status_code
+        data = response.json()
+        return jsonify(data)
+    except RequestException as e:
+        # Handle connection errors, timeouts, etc.
+        return jsonify({'error': 'API request failed', 'details': str(e)}), 503
 
 
 @app.route('/flights', methods=['POST'])
