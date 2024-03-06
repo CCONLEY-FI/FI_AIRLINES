@@ -11,13 +11,14 @@ const RegisterForm = () => {
     const[password, setPassword] = useState("");
     const [verifyPassword, setVerifyPassword] = useState("");
     const [error, setError] = useState("");
+    
 
     const navigate = useNavigate()
     const handleCreateUser = (e) => {
         e.preventDefault()
         if (password !== verifyPassword) {
-            setError("Passwords do not match")
-            return
+            alert("Passwords do not match")
+            return 
         }
         fetch('/users', {
             method: 'POST',
