@@ -12,7 +12,7 @@ const LoginForm = () => {
         navigate("/register")
     }
     function handleSignIn(){
-        navigate("/frontpage", {replace: true})
+        navigate("/home", {replace: true})
     }
     return (
         <div className='loginForm'>
