@@ -7,10 +7,13 @@ import { NavLink, Link, Outlet } from "react-router-dom";
 
 const NavBar = () => {
     return (
-        <div>
+        <div >
             <NavLink to='/' className='navbar'>Home</NavLink>
+            
             <Link to='/register' className='navbar'>Register</Link>
+            
             <Link to='/flights' className='navbar'>Flights</Link>
+            
             <main>
                 <Outlet/>
             </main>

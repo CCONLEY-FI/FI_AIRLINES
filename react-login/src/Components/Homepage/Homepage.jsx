@@ -1,12 +1,14 @@
 import React from 'react';
 // import "./Homepage.css";
+import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 const Homepage = () => {
+    
     const navigate = useNavigate();
 
     const handleSearchFlights = (searchParams) => {
         navigate(
-            `/flights?origin=${searchParams.origin}&destination=${searchParams.destination}`
+            `/flights?origin=${searchParams.origin}&destination=${searchParams.destination}&arr_scheduled_time_arr=${searchParams.date}`
         );
     };
     return (

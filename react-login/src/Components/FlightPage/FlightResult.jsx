@@ -7,6 +7,8 @@ const FlightResult = () => {
     const searchParams = new URLSearchParams(location.search);
     const origin = searchParams.get('origin');
     const destination = searchParams.get('destination');
+    
+    const [airline, setAirline] = useState("")
 
     useEffect(() => {
         fetch(`/api/flights?origin=${origin}&destination=${destination}`)
@@ -15,18 +17,36 @@ const FlightResult = () => {
             .catch(error => console.error('Error fetching flights:', error));
     }, [origin, destination]); // Dependency array now includes origin and destination to refetch when they change
 
+    function handleAirline(e){
+      setAirline(e.target.value)
+    }
+
+    function handleAirlineSubmit(e){
+      e.preventDefault()
+      
+      console.log(airline)
+    }
+
     return (
         <div>
             <div className='flight'>
                 {flights.length > 0 ? (
                     flights.map(flight => (
+                      
                         <div key={flight.id}>
                             {/* Display flight details */}
                             Flight Number: {flight.flight_number}, Origin: {flight.origin}, Destination: {flight.destination}
                         </div>
+                        
                     ))
                 ) : (
+                  <div>
                     <p>No flights available.</p>
+                    <form onSubmit={handleAirlineSubmit}>
+                      <input type='text' placeholder='Airline' onChange={(e)=>handleAirline(e)}/>
+                      
+                    </form>
+                  </div>
                 )}
             </div>
         </div>
