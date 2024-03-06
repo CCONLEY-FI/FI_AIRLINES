@@ -16,7 +16,7 @@ function App() {
     <Route path="/" element={<NavBar />}>
       <Route index element={<LoginForm />}/>
       <Route path='/register' element={<RegisterForm />}/>
-      <Route path='/frontpage' element={<Homepage />}/>
+      <Route path='/home' element={<Homepage />}/>
       <Route path='/flights' element={<FlightPage />}/>
     </Route>
   )
