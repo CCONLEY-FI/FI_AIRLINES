@@ -14,7 +14,7 @@ const FlightResult = () => {
             .then(data => setFlights(data))
             .catch(error => console.error('Error fetching flights:', error));
     }, [origin, destination]); // Dependency array now includes origin and destination to refetch when they change
-
+// hello world
     return (
         <div>
             <div className='flight'>

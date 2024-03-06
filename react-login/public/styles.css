@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#flightlist {
+    font-family: Arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#flightlist td, #flightlist th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#flightlist tr:nth-child(even){background-color: #f2f2f2;}
+
+#flightlist tr:hover {background-color: #ddd;}
+
+#flightlist th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+#flightlist th, #flightlist td {
+    text-align: center;
+}
+
