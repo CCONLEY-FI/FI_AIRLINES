@@ -1,8 +1,8 @@
 import React,{ useState }  from 'react'
 
-function FlightResultCard() {
+function FlightResultCard({results}) {
 
-  
+
   return (
     <div>FlightResultCard</div>
   )
