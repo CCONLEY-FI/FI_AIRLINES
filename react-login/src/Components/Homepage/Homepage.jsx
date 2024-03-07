@@ -2,38 +2,48 @@ import React from 'react';
 // import "./Homepage.css";
 import { PiAirplaneTakeoff, PiAirplaneLanding } from 'react-icons/pi';
 import {useEffect, useState} from "react";
-import { useNavigate } from 'react-router-dom';
-const Homepage = () => {
-    
-    const navigate = useNavigate();
 
-    const handleSearchFlights = (e) => {
-        e.preventDefault(); // Prevent default form submission
-        const origin = e.target.origin.value;
-        const destination = e.target.destination.value;
-        const date = e.target.querySelector('input[type="date"]').value;
-        const flightClass = e.target.querySelector('select').value;
-        navigate(
-            `/flights?origin=${origin}&destination=${destination}&date=${date}&class=${flightClass}`
-        );
-    };
+const Homepage = () => {
+	
+	const [ origin, setOrigin ] = useState("")
+    const [ arrival, setArrival ] = useState("")
+    const [ flightDate, setFlightDate ] = useState("")
+    const [ allFlights, setAllFlights ] = useState([])
+	
+
+    
+    useEffect(() => {
+		fetch('/flights')
+		.then((r) => r.json())
+		.then((flights) => setAllFlights(flights))
+	 }, [])
+    
+    function handleSearchFlights(e){
+		e.preventDefault()
+		const results = allFlights?.filter((flight) => (
+			flight.arrival.includes(arrival) && flight.origin && flight.flightDate
+		))
+		console.log(results)
+		return results
+	}
+
     return (
         <div className='registerForm'>
-        <form action=''>
+        <form onSubmit={(e) => handleSearchFlights(e)}>
             <h1>Browse Flights</h1>
             <div className='input-field'>
-                <input type='text' placeholder='Origin' required/>
-                <PiAirplaneTakeoff  className='icon'/>
+                <input type='text' placeholder='Origin' value={origin} onChange={(e)=> setOrigin(e.target.value)} required/>
+                <PiAirplaneTakeoff className='icon'/>
             </div>
             <div className='input-field'>
-                <input type='text' placeholder='Destination' required/>
+                <input type='text' placeholder='Destination'  value={arrival} onChange={setArrival} required/>
                 <PiAirplaneLanding className='icon' />
 
             </div>
             <div className='input-field'>
-                <input type='date' placeholder='Date' required/>
+                <input type='date' placeholder='Date' value={flightDate} onChange={setFlightDate} required/>
             </div>
-            <button type='submit' onClick={handleSearchFlights}>Search Flights</button>
+            <button type='submit' >Search Flights</button>
         </form>
     </div>
     );
