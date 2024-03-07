@@ -2,31 +2,71 @@ import os
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from flask_migrate import Migrate
-from extensions import db  # Import db from extensions.py
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 import logging
-import requests
-from requests.exceptions import RequestException
-# Ensure models are imported after db to avoid uninitialized db usage
-from models import Flight, Trip, User
+from faker import Faker
+import random
 from dotenv import load_dotenv
 from flask.views import MethodView
-# from flask_classful import FlaskView, route
 
 load_dotenv()  # Take environment variables from .env.
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "sqlite:///flights.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
-
+db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-db.init_app(app)
-migrate = Migrate(app, db)
-
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
+fake = Faker()
+
+class Flight(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    flight_number = db.Column(db.String(80), nullable=False)
+    departure_airport = db.Column(db.String(120), nullable=False)
+    arrival_airport = db.Column(db.String(120), nullable=False)
+    departure_time = db.Column(db.String(120), nullable=False)
+    arrival_time = db.Column(db.String(120), nullable=False)
+    status = db.Column(db.String(120), nullable=False)
+
+# Ensure models are imported after db to avoid uninitialized db usage
+from models import Trip, User  # Adjust this line if necessary to fit your project structure
+
+def generate_fake_flight():
+    flight = Flight(
+        flight_number=fake.bothify(text='???###'),
+        departure_airport=fake.city(),
+        arrival_airport=fake.city(),
+        departure_time=fake.iso8601(),
+        arrival_time=fake.iso8601(),
+        status=random.choice(["On Time", "Delayed", "Cancelled"])
+    )
+    db.session.add(flight)
+    db.session.commit()
+
+def populate_db():
+    db.drop_all()
+    db.create_all()
+    for _ in range(10):  # Generate 10 fake flights
+        generate_fake_flight()
+
+# Uncomment the next line if you want to repopulate the database every time the app starts
+# populate_db()
+
+@app.route('/api/flights')
+def get_flights():
+    flights = Flight.query.all()
+    flights_data = [{
+        "flight_number": flight.flight_number,
+        "departure_airport": flight.departure_airport,
+        "arrival_airport": flight.arrival_airport,
+        "departure_time": flight.departure_time,
+        "arrival_time": flight.arrival_time,
+        "status": flight.status
+    } for flight in flights]
+    return jsonify(flights_data)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -34,7 +74,7 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = User.query.filter_by(username = username).first()
+    user = User.query.filter_by(username=username).first()
     if user and bcrypt.check_password_hash(user.password, password):
         return jsonify({'user': user.to_dict()})
     else:
@@ -43,188 +83,6 @@ def login():
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404
-
-
-
-class FlightAPI(MethodView):
-    def get(self):
-        access_key = os.getenv('AVIATIONSTACK_API_KEY')  # Get API key from environment variable
-        if not access_key:
-            return jsonify({'error': 'API key is not set'}), 500
-
-        base_url = 'https://api.aviationstack.com/v1/flights'
-        params = {
-            'access_key': access_key,
-            # Add any other parameters you need
-        }
-
-        try:
-            response = requests.get(base_url, params=params)
-            # Check for HTTP codes other than 200
-            if response.status_code != 200:
-                # You can be more specific with each status code if needed
-                return jsonify({'error': 'Failed to fetch data from aviationstack API', 'status_code': response.status_code}), response.status_code
-            data = response.json()
-            return jsonify(data)
-        except RequestException as e:
-            # Handle connection errors, timeouts, etc.
-            return jsonify({'error': 'API request failed', 'details': str(e)}), 503
-
-class RealTimeFlightAPI(MethodView):
-    def get(self, flight_number):
-        access_key = os.getenv('AVIATIONSTACK_API_KEY')
-        if not access_key:
-            return jsonify({'error': 'API key is not set'}), 500
-
-        params = {
-            'access_key': access_key,
-            'flight_number': flight_number
-        }
-        response = requests.get('https://api.aviationstack.com/v1/flights', params=params)
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            return jsonify({'error': 'Failed to fetch flight data'}), response.status_code
-
-class AirlineInfoAPI(MethodView):
-    def get(self, iata_code):
-        access_key = os.getenv('AVIATIONSTACK_API_KEY')
-        params = {
-            'access_key': access_key,
-            'airline_iata': iata_code
-        }
-        response = requests.get('https://api.aviationstack.com/v1/airlines', params=params)
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            return jsonify({'error': 'Failed to fetch airline information'}), response.status_code
-
-class AirportInfoAPI(MethodView):
-    def get(self, iata_code):
-        access_key = os.getenv('AVIATIONSTACK_API_KEY')
-        params = {
-            'access_key': access_key,
-            'iata_code': iata_code
-        }
-        response = requests.get('https://api.aviationstack.com/v1/airports', params=params)
-        if response.status_code == 200:
-            return jsonify(response.json())
-        else:
-            return jsonify({'error': 'Failed to fetch airport information'}), response.status_code
-
-class FlightCRUD(MethodView):
-    def post(self):
-        data = request.get_json()
-        flight = Flight(**data)
-        db.session.add(flight)
-        db.session.commit()
-        return jsonify(flight.to_dict()), 201
-
-    def get(self, id=None):
-        if id is None:
-            flights = Flight.query.all()
-            return jsonify([flight.to_dict() for flight in flights])
-        else:
-            flight = Flight.query.get_or_404(id)
-            return jsonify(flight.to_dict())
-
-    def put(self, id):
-        flight = Flight.query.get_or_404(id)
-        data = request.get_json()
-        for key, value in data.items():
-            setattr(flight, key, value)
-        db.session.commit()
-        return jsonify(flight.to_dict())
-
-    def delete(self, id):
-        flight = Flight.query.get_or_404(id)
-        db.session.delete(flight)
-        db.session.commit()
-        return jsonify({}), 204
-
-class TripCRUD(MethodView):
-    def post(self):
-        data = request.get_json()
-        trip = Trip(**data)
-        db.session.add(trip)
-        db.session.commit()
-        return jsonify(trip.to_dict()), 201
-
-    def get(self, id=None):
-        if id is None:
-            trips = Trip.query.all()
-            return jsonify([trip.to_dict() for trip in trips])
-        else:
-            trip = Trip.query.get_or_404(id)
-            return jsonify(trip.to_dict())
-
-    def put(self, id):
-        trip = Trip.query.get_or_404(id)
-        data = request.get_json()
-        for key, value in data.items():
-            setattr(trip, key, value)
-        db.session.commit()
-        return jsonify(trip.to_dict())
-
-    def delete(self, id):
-        trip = Trip.query.get_or_404(id)
-        db.session.delete(trip)
-        db.session.commit()
-        return jsonify({}), 204
-
-class UserCRUD(MethodView):
-    def post(self):
-        data = request.get_json()
-        if 'username' not in data or 'password' not in data:
-            abort(400, description="Missing username or password")
-        hashed_password = bcrypt.generate_password_hash(
-            data['password']).decode('utf-8')
-        data['password'] = hashed_password
-        user = User(**data)
-        db.session.add(user)
-        db.session.commit()
-        return jsonify(user.to_dict()), 201
-
-    def get(self, id=None):
-        if id is None:
-            users = User.query.all()
-            return jsonify([user.to_dict() for user in users])
-        else:
-            user = User.query.get_or_404(id)
-            return jsonify(user.to_dict())
-
-    def put(self, id):
-        user = User.query.get_or_404(id)
-        data = request.get_json()
-        for key, value in data.items():
-            setattr(user, key, value)
-        db.session.commit()
-        return jsonify(user.to_dict())
-
-    def delete(self, id):
-        user = User.query.get_or_404(id)
-        db.session.delete(user)
-        db.session.commit()
-        return jsonify({}), 204
-
-@app.errorhandler(404)
-def resource_not_found(e):
-    return jsonify(error=str(e)), 404
-
-# Registering the views
-app.add_url_rule('/api/flights', view_func=FlightAPI.as_view('flight_api'))
-app.add_url_rule('/api/real-time-flight/<flight_number>', view_func=RealTimeFlightAPI.as_view('real_time_flight_api'))
-app.add_url_rule('/api/airline/<iata_code>', view_func=AirlineInfoAPI.as_view('airline_info_api'))
-app.add_url_rule('/api/airport/<iata_code>', view_func=AirportInfoAPI.as_view('airport_info_api'))
-app.add_url_rule('/flights', defaults={'id': None}, view_func=FlightCRUD.as_view('flights_list'), methods=['GET',])
-app.add_url_rule('/flights', view_func=FlightCRUD.as_view('create_flight'), methods=['POST',])
-app.add_url_rule('/flights/<int:id>', view_func=FlightCRUD.as_view('flight_detail'), methods=['GET', 'PUT', 'DELETE'])
-app.add_url_rule('/trips', defaults={'id': None}, view_func=TripCRUD.as_view('trips_list'), methods=['GET',])
-app.add_url_rule('/trips', view_func=TripCRUD.as_view('create_trip'), methods=['POST',])
-app.add_url_rule('/trips/<int:id>', view_func=TripCRUD.as_view('trip_detail'), methods=['GET', 'PUT', 'DELETE'])
-app.add_url_rule('/users', defaults={'id': None}, view_func=UserCRUD.as_view('users_list'), methods=['GET',])
-app.add_url_rule('/users', view_func=UserCRUD.as_view('create_user'), methods=['POST',])
-app.add_url_rule('/users/<int:id>', view_func=UserCRUD.as_view('user_detail'), methods=['GET', 'PUT', 'DELETE'])
 
 if __name__ == "__main__":
     app.run(debug=True)
