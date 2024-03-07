@@ -46,6 +46,7 @@ class Trip(db.Model):
         'flights.id'), nullable=False)
     details = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    trip_notes = db.Column(db.String(255), nullable=True)
 
     user = relationship('User', back_populates='trips')
     flight = relationship('Flight')
