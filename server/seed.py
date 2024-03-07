@@ -4,27 +4,51 @@ from models import Flight, Trip, User
 from datetime import datetime, timedelta
 from faker import Faker
 import random
+from flask_bcrypt import Bcrypt
+
 
 fake = Faker()
+bcrypt = Bcrypt()
+
+def seed_users(n=10):
+    for _ in range(n):
+        username = fake.user_name()
+        password = bcrypt.generate_password_hash("password").decode('utf-8')
+        user = User(username=username, password=password)
+        db.session.add(user)
+    db.session.commit()
+    
 
 def seed_flights(n=50):
     flights = []
-    for _ in range(n):
+    existing_flight_numbers = {
+        flight.flight_number for flight in Flight.query.all()}
+
+    while len(flights) < n:
         flight_number = fake.bothify(text='FL###')
+
+        if flight_number in existing_flight_numbers:
+            continue
+
         origin = fake.city()
         destination = fake.city()
-        # Ensure departure is before arrival
-        departure_time = fake.date_time_this_year(before_now=False, after_now=True)
-        arrival_time = departure_time + timedelta(hours=random.randint(1, 5))
-        
+        departure_datetime = fake.date_time_this_year(
+            before_now=False, after_now=True)
+        arrival_datetime = departure_datetime + \
+            timedelta(hours=random.randint(1, 5))
+
         flight = Flight(
             flight_number=flight_number,
             origin=origin,
             destination=destination,
-            departure_time=departure_time,
-            arrival_time=arrival_time
+            departure_date=departure_datetime.date(),
+            departure_time=departure_datetime.time(),
+            arrival_date=arrival_datetime.date(),
+            arrival_time=arrival_datetime.time()
         )
         flights.append(flight)
+        existing_flight_numbers.add(flight_number)
+
     db.session.add_all(flights)
     db.session.commit()
     return flights
@@ -44,8 +68,9 @@ def seed_data():
     user_ids = [user.id for user in User.query.all()]
     
     if not user_ids:
-        print("No users found. Please ensure there are users in the database before seeding trips.")
-        return
+        print("No users found. Seeding users...")
+        seed_users(n=10)
+        user_ids = [user.id for user in User.query.all()]
 
     # Seed flights
     flights = seed_flights(n=50)  # Adjust the number of flights as needed

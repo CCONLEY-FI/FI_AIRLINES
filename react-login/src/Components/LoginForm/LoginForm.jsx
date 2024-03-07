@@ -1,43 +1,56 @@
-import React from 'react';
-import "./LoginForm.css";
-import { FaUserAstronaut } from "react-icons/fa";
-import { RiLockPasswordFill } from "react-icons/ri";
-import { useNavigate } from 'react-router-dom';
-
-
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-    const navigate = useNavigate()
-    const handleRegister = () => {
-        navigate("/register")
-    }
-    function handleSignIn(){
-        navigate("/frontpage", {replace: true})
-    }
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const user = await response.json();
+            console.log("Login Successful", user);
+            navigate("/homepage"); // Redirect after login
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
     return (
         <div className='loginForm'>
-            <form action=''>
+            <form onSubmit={handleSubmit}>
                 <h1>Login</h1>
                 <div className='input-field'>
-                    <input type='text' placeholder='Username'/>
-                    <FaUserAstronaut className='icon' />
+                    <input
+                        type='text'
+                        placeholder='Username'
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
                 </div>
                 <div className='input-field'>
-                    <input type='password' placeholder='Password'/>
-                    <RiLockPasswordFill className='icon' />
-
+                    <input
+                        type='password'
+                        placeholder='Password'
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
                 </div>
-                <div className='input-field'>
-                    <input type='submit' value='Login' onClick={handleSignIn}/>
-                </div>
-                <div className='remember-me-forget'>
-                    <label><input type="checkbox"/>Remember Me</label>
-                    <a href='#'>Forget Password</a>
-                </div>
-                {/* <button type='submit'>Login</button> */}
-                <div className="register"><p>Don't have an account? <a onClick={handleRegister}>Register</a></p></div>
+                <button type='submit'>Login</button>
             </form>
-            
         </div>
     );
 };
