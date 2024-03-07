@@ -32,17 +32,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
 .navbar {
-  margin-top: 0;
-  color:white;
-  float: right;
-  height: 10em;
-  display: flex;
-  align-items: right;
-  /* justify-content: space-between; */
   
-  padding: 16px;
-}
-
+  color: white;
+ /* to vertically align */
+  display: flex;
+  align-items: center;
+ /* push the nav to the right */
+  margin-left: auto;
+ /* move it a bit back away from the edge */
+  margin-right: 20px;
+  padding: 15px;
+ }
 

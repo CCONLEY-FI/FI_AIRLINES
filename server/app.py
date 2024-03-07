@@ -28,6 +28,24 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
 
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = User.query.filter_by(username = username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return jsonify({'user': user.to_dict()})
+    else:
+        return jsonify({'error': 'Invalid username or password'})
+    
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
+
 class FlightAPI(MethodView):
     def get(self):
         access_key = os.getenv('AVIATIONSTACK_API_KEY')  # Get API key from environment variable
