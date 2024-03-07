@@ -22,17 +22,10 @@ CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 logging.basicConfig(level=logging.DEBUG)
 fake = Faker()
 
-class Flight(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    flight_number = db.Column(db.String(80), nullable=False)
-    departure_airport = db.Column(db.String(120), nullable=False)
-    arrival_airport = db.Column(db.String(120), nullable=False)
-    departure_time = db.Column(db.String(120), nullable=False)
-    arrival_time = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.String(120), nullable=False)
+
 
 # Ensure models are imported after db to avoid uninitialized db usage
-from models import Trip, User  # Adjust this line if necessary to fit your project structure
+from models import Trip, User, Flight  # Adjust this line if necessary to fit your project structure
 
 def generate_fake_flight():
     flight = Flight(
