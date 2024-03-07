@@ -1,5 +1,6 @@
 import React from 'react';
 // import "./Homepage.css";
+import { PiAirplaneTakeoff, PiAirplaneLanding } from 'react-icons/pi';
 import {useEffect, useState} from "react";
 import { useNavigate } from 'react-router-dom';
 const Homepage = () => {
@@ -22,9 +23,12 @@ const Homepage = () => {
             <h1>Browse Flights</h1>
             <div className='input-field'>
                 <input type='text' placeholder='Origin' required/>
+                <PiAirplaneTakeoff  className='icon'/>
             </div>
             <div className='input-field'>
                 <input type='text' placeholder='Destination' required/>
+                <PiAirplaneLanding className='icon' />
+
             </div>
             <div className='input-field'>
                 <input type='date' placeholder='Date' required/>
