@@ -47,6 +47,13 @@ class User(db.Model, SerializerMixin):
     password = db.Column(db.String(128), nullable=False)
     trips = relationship('Trip', back_populates='user')
 
+    def safe_data(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            # Add any other fields you want to expose
+        }
+
 
 # class Flight(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

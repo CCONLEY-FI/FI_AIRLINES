@@ -69,17 +69,26 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and bcrypt.check_password_hash(user.password, password):
-        return jsonify({'user': user.to_dict()})
+        # Assuming you have a method in your User model called `safe_data` that excludes sensitive info
+        return jsonify({'user': user.safe_data()})
     else:
-        return jsonify({'error': 'Invalid username or password'})
-    
+        return jsonify({'error': 'Invalid username or password'}), 401
+
 @app.route('/users', methods=['POST'])
 def register_user():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    username = data.get('username', '').strip()
+    password = data.get('password', '').strip()
 
+    # Validate input data
+    if not username or not password:
+        return jsonify({'error': 'Username and password are required'}), 400
+
+    # Check for existing user
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': 'Username already exists'}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     new_user = User(username=username, password=hashed_password)
     db.session.add(new_user)
     db.session.commit()

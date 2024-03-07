@@ -1,37 +1,59 @@
 from extensions import db
 from app import app
 from models import Flight, Trip, User
-from datetime import datetime
-import bcrypt
+from datetime import datetime, timedelta
+from faker import Faker
+import random
 
+fake = Faker()
+
+def seed_flights(n=50):
+    flights = []
+    for _ in range(n):
+        flight_number = fake.bothify(text='FL###')
+        origin = fake.city()
+        destination = fake.city()
+        # Ensure departure is before arrival
+        departure_time = fake.date_time_this_year(before_now=False, after_now=True)
+        arrival_time = departure_time + timedelta(hours=random.randint(1, 5))
+        
+        flight = Flight(
+            flight_number=flight_number,
+            origin=origin,
+            destination=destination,
+            departure_time=departure_time,
+            arrival_time=arrival_time
+        )
+        flights.append(flight)
+    db.session.add_all(flights)
+    db.session.commit()
+    return flights
+
+def seed_trips(flights, user_ids):
+    trips = []
+    for flight in flights:
+        user_id = random.choice(user_ids)
+        trip = Trip(user_id=user_id, flight_id=flight.id)
+        trips.append(trip)
+    db.session.add_all(trips)
+    db.session.commit()
 
 def seed_data():
-    # Delete existing data
-    db.session.query(Flight).delete()
-    db.session.query(Trip).delete()
-    db.session.query(User).delete()
+    # Assuming you do not want to delete existing flights and trips
+    # Fetch existing user IDs to associate trips with users
+    user_ids = [user.id for user in User.query.all()]
+    
+    if not user_ids:
+        print("No users found. Please ensure there are users in the database before seeding trips.")
+        return
 
-    # Add new records
-    hashed_password = bcrypt.hashpw('password'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    user1 = User(username="John Doe", password=hashed_password)
-    user2 = User(username="Jane Smith", password=hashed_password)
- 
-    flight1 = Flight(flight_number="FL123", origin="City A", destination="City B", departure_time=datetime.strptime("2023-04-01 10:00:00", "%Y-%m-%d %H:%M:%S"))
-    flight2 = Flight(flight_number="FL456", origin="City C", destination="City D", departure_time=datetime.strptime("2023-04-02 15:00:00", "%Y-%m-%d %H:%M:%S"))
+    # Seed flights
+    flights = seed_flights(n=50)  # Adjust the number of flights as needed
 
-    # It's important to add and commit users and flights before creating itineraries to ensure they have IDs.
-    db.session.add_all([user1, user2, flight1, flight2])
-    db.session.commit()
+    # Seed trips with the newly created flights and existing users
+    seed_trips(flights, user_ids)
 
-    # Now, use the actual instances of users and flights to create itineraries
-    trip1 = Trip(user_id=user1.id, flight_id=flight1.id)
-    trip2 = Trip(user_id=user2.id, flight_id=flight2.id)
-
-    db.session.add_all([trip1, trip2])
-    db.session.commit()
-
-    print("Database seeded!")
-
+    print("Database seeded with flights and trips!")
 
 if __name__ == "__main__":
     with app.app_context():
