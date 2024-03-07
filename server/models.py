@@ -2,7 +2,10 @@ from datetime import datetime
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates, relationship
 from extensions import db
+from faker import Faker  # Import Faker
+import random
 
+fake = Faker()
 
 class Flight(db.Model, SerializerMixin):
     __tablename__ = 'flights'
@@ -41,16 +44,15 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    # Ensure adequate length for hashed passwords
     password = db.Column(db.String(128), nullable=False)
     trips = relationship('Trip', back_populates='user')
 
 
-class Flight(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    flight_number = db.Column(db.String(80), nullable=False)
-    departure_airport = db.Column(db.String(120), nullable=False)
-    arrival_airport = db.Column(db.String(120), nullable=False)
-    departure_time = db.Column(db.String(120), nullable=False)
-    arrival_time = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.String(120), nullable=False)
+# class Flight(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     flight_number = db.Column(db.String(80), nullable=False)
+#     departure_airport = db.Column(db.String(120), nullable=False)
+#     arrival_airport = db.Column(db.String(120), nullable=False)
+#     departure_time = db.Column(db.String(120), nullable=False)
+#     arrival_time = db.Column(db.String(120), nullable=False)
+#     status = db.Column(db.String(120), nullable=False)

@@ -73,6 +73,18 @@ def login():
     else:
         return jsonify({'error': 'Invalid username or password'})
     
+@app.route('/users', methods=['POST'])
+def register_user():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    new_user = User(username=username, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'User registered successfully'}), 201
 @app.errorhandler(404)
 def resource_not_found(e):
     return jsonify(error=str(e)), 404
