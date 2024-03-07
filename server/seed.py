@@ -1,7 +1,7 @@
 from extensions import db
 from app import app
 from models import Flight, Trip, User
-from datetime import datetime, timedelta
+from datetime import timedelta
 from faker import Faker
 import random
 from flask_bcrypt import Bcrypt
@@ -36,8 +36,8 @@ def seed_flights(n=50):
         if flight_number in existing_flight_numbers:
             continue
 
-        origin = fake.city()
-        destination = fake.city()
+        origin = fake.city() + ", " + fake.state_abbr()
+        destination = fake.city() + ", " + fake.state_abbr()
         departure_datetime = fake.date_time_this_year(
             before_now=False, after_now=True)
         arrival_datetime = departure_datetime + \
@@ -63,14 +63,13 @@ def seed_trips(flights, user_ids):
     trips = []
     for flight in flights:
         user_id = random.choice(user_ids)
-        trip = Trip(user_id=user_id, flight_id=flight.id)
+        trip_notes = fake.sentence()    
+        trip = Trip(user_id=user_id, flight_id=flight.id, trip_notes=trip_notes)
         trips.append(trip)
     db.session.add_all(trips)
     db.session.commit()
 
 def seed_data():
-    # Assuming you do not want to delete existing flights and trips
-    # Fetch existing user IDs to associate trips with users
     user_ids = [user.id for user in User.query.all()]
     
     if not user_ids:
@@ -79,9 +78,8 @@ def seed_data():
         user_ids = [user.id for user in User.query.all()]
 
     # Seed flights
-    flights = seed_flights(n=50)  # Adjust the number of flights as needed
+    flights = seed_flights(n=50) 
 
-    # Seed trips with the newly created flights and existing users
     seed_trips(flights, user_ids)
 
     print("Database seeded with flights and trips!")
