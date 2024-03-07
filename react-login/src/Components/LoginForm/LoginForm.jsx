@@ -2,31 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const navigate = useNavigate();
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch("/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.statusText}`);
-            }
-
-            const user = await response.json();
-            console.log("Login Successful", user);
-            navigate("/homepage"); // Redirect after login
-        } catch (error) {
-            console.error(error.message);
-        }
-    };
-
+    const navigate = useNavigate()
+    const handleRegister = () => {
+        navigate("/register")
+    }
+    function handleSignIn(){
+        navigate("/frontpage", {replace: true})
+    }
     return (
         <div className='loginForm'>
             <form onSubmit={handleSubmit}>
