@@ -10,13 +10,19 @@ from flask_bcrypt import Bcrypt
 fake = Faker()
 bcrypt = Bcrypt()
 
-def seed_users(n=10):
+
+def seed_users(n=10):  # Number of users to create
+    known_password = "password"  # You may choose a different known password
+    hashed_password = bcrypt.generate_password_hash(
+        known_password).decode('utf-8')
+
     for _ in range(n):
         username = fake.user_name()
-        password = bcrypt.generate_password_hash("password").decode('utf-8')
-        user = User(username=username, password=password)
+        user = User(username=username, password=hashed_password)
         db.session.add(user)
     db.session.commit()
+
+    print(f"Seeded {n} users with the known password: {known_password}")
     
 
 def seed_flights(n=50):
