@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
@@ -8,7 +8,10 @@ import Homepage from './Components/Homepage/Homepage';
 import FlightPage from './Components/FlightPage/FlightResult';
 import NavBar from './Components/NavBar';
 
+
+
 function App() {
+
  const handleLogin = (username, password) => {
     // Handle login logic here
     console.log('Username:', username);
@@ -22,6 +25,12 @@ function App() {
       }
     });
  }, []);
+ 
+ 
+
+//  const results = allFlights?.filter((flight) => (
+//   flight.origin.toLowerCase().includes(searchQuery.toLowerCase())
+//  ))
 
  return (
     <Router>
