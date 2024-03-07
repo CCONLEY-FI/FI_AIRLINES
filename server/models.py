@@ -46,11 +46,11 @@ class User(db.Model, SerializerMixin):
     trips = relationship('Trip', back_populates='user')
 
 
-class Flight(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    flight_number = db.Column(db.String(80), nullable=False)
-    departure_airport = db.Column(db.String(120), nullable=False)
-    arrival_airport = db.Column(db.String(120), nullable=False)
-    departure_time = db.Column(db.String(120), nullable=False)
-    arrival_time = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.String(120), nullable=False)
+# class Flight(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     flight_number = db.Column(db.String(80), nullable=False)
+#     departure_airport = db.Column(db.String(120), nullable=False)
+#     arrival_airport = db.Column(db.String(120), nullable=False)
+#     departure_time = db.Column(db.String(120), nullable=False)
+#     arrival_time = db.Column(db.String(120), nullable=False)
+#     status = db.Column(db.String(120), nullable=False)
