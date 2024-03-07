@@ -5,8 +5,8 @@ import FlightResultCard from './FlightResultCard';
 const FlightResult = () => {
     
     const [ origin, setOrigin ] = useState("")
-    const [ arrival, setArrival ] = useState("")
-    const [ flightDate, setFlightDate ] = useState("")
+    const [ destination, setDestination ] = useState("")
+    const [ departureDate, setDepartureDate ] = useState("")
     const [ allFlights, setAllFlights ] = useState([])
 
     
@@ -25,28 +25,31 @@ const FlightResult = () => {
       <form>
           <div className="input-field">
               <label htmlFor="origin">From</label>
-              <input type="text" id="origin" name="origin" placeholder="Origin"  />
+              <input type="text" id="origin" name="origin" placeholder="Origin" value={setOrigin} />
           </div>
           <div className="input-field">
               <label htmlFor="destination">To</label>
-              <input type="text" id="destination" name="destination" placeholder="Destination"  />
+              <input type="text" id="destination" name="destination" placeholder="Destination" value={setDestination} />
           </div>
           <div className="input-field">
               <label htmlFor="date">Departure Date</label>
-              <input type="date" id="date" name="date"  />
+              <input type="date" id="date" name="date"  value={setDepartureDate}/>
           </div>
-          <div className="input-field">
+		  {/* static vars */}
+          <div >
               <label htmlFor="time">Departure Time</label>
-              <input type="text" id="departure-time" name="departure-time" placeholder='Departure Time'  />
+              <h2> Departure Time</h2>
           </div>
           <div className="input-field">
-              <label htmlFor="time">Arival Time</label>
-              <input type="text" id="arival-time" name="arival-time" placeholder='Arival Time'  />
+              <label htmlFor="time">Arrival Time</label>
+              <h2> Arrival Time</h2>
           </div>
+		  
           <div className="input-field">
               <label htmlFor="flight-number">Flight Number</label>
-              <input type="text" id="flight-number" name="flight-number" placeholder='Flight Number'  />
+              <h2> Flight Number</h2>
           </div>
+		  {/* end of static vars*/}
           <button type="submit" className="submit-btn">Save Flight</button>
       </form>
       {/* {savedFlightsList} */}

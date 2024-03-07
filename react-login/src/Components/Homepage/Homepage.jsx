@@ -9,59 +9,70 @@ import RegisterForm from '../RegisterForm/RegisterForm';
 
 const Homepage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    
-    const navigate = useNavigate();
+	const [ results, setResults ] = useState([])
+	const [ flightOrigin, setFlightOrigin ] = useState("")
+    const [ flightArrival, setFlightArrival ] = useState("")
+    const [ flightDate, setFlightDate ] = useState("")
+    const [ allFlights, setAllFlights ] = useState([])
+	
 
-    const handleSearchFlights = (e) => {
-        e.preventDefault(); // Prevent default form submission
-        const origin = e.target.origin.value;
-        const destination = e.target.destination.value;
-        const date = e.target.querySelector('input[type="date"]').value;
-        const flightClass = e.target.querySelector('select').value;
-        navigate(
-            `/flights?origin=${origin}&destination=${destination}&date=${date}&class=${flightClass}`
-        );
-    };
+    
+    useEffect(() => {
+		fetch('/flights')
+		.then((r) => r.json())
+		.then((flights) => setAllFlights(flights))
+	 }, [])
+    
+    function handleSearchFlights(e){
+		e.preventDefault()
+		const results = allFlights?.filter((flight) => (
+			flight.destination.includes(flightArrival) && flight.origin.includes(flightOrigin) && flight.departure_date.includes(flightDate)
+		))
+		console.log(results)
+		
+		setResults(results)
+	}
+	
 
     return (
-        <div>
+		<div className='registerForm'>
             {isLoggedIn ? (
                 <div className='registerForm'>
-                    <form action=''>
+                    <form onSubmit={(e) => handleSearchFlights(e)}>
                         <h1>Browse Flights</h1>
                         <div className='input-field'>
-                            <input type='text' placeholder='Origin' required/>
+                            <input type='text' placeholder='Origin' value={flightOrigin} onChange={(e)=> setFlightOrigin(e.target.value)}required/>
                             <PiAirplaneTakeoff className='icon'/>
                         </div>
                         <div className='input-field'>
-                            <input type='text' placeholder='Destination' required/>
+                            <input type='text' placeholder='Destination' value={flightArrival} onChange={(e)=>setFlightArrival(e.target.value)}  required/>
                             <PiAirplaneLanding className='icon' />
                         </div>
                         <div className='input-field'>
-                            <input type='date' placeholder='Date' required/>
+                            <input type='date' placeholder='Date' value={flightDate} onChange={(e)=>setFlightDate(e.target.value)} required/>
                         </div>
-                        <button type='submit' onClick={handleSearchFlights}>Search Flights</button>
+                        <button type='submit'>Search Flights</button>
                     </form>
                 </div>
             ) : (
                 <div>
                     <div className='registerForm'>
-                        <form action=''>
+                        <form onSubmit={(e) => handleSearchFlights(e)}>
                             <h1>Welcome Back</h1>
-                            <div className='input-field'>
-                                <input type='text' placeholder='Origin' required/>
-                                <PiAirplaneTakeoff className='icon'/>
-                            </div>
-                            <div className='input-field'>
-                                <input type='text' placeholder='Destination' required/>
-                                <PiAirplaneLanding className='icon' />
-                            </div>
-                            <div className='input-field'>
-                                <input type='date' placeholder='Date' required/>
-                            </div>
-                            <button type='submit' onClick={handleSearchFlights}>Search Flights</button>
+                        <div className='input-field'>
+						<input type='text' placeholder='Origin' value={flightOrigin} onChange={(e)=> setFlightOrigin(e.target.value)}required/>
+                            <PiAirplaneTakeoff className='icon'/>
+                        </div>
+                        <div className='input-field'>
+							<input type='text' placeholder='Destination' value={flightArrival} onChange={(e)=>setFlightArrival(e.target.value)}  required/>
+                            <PiAirplaneLanding className='icon' />
+                        </div>
+                        <div className='input-field'>
+                            <input type='date' placeholder='Date' value={flightDate} onChange={(e) => setFlightDate(e.target.value)} required/>
+                        </div>
+                            <button type='submit'>Search Flights</button>
                         </form>
-                        <FlightResultCard />
+                        <FlightResultCard results={results}/>
                     </div>
                 </div>
             )}
