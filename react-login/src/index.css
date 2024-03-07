@@ -36,14 +36,29 @@ code {
 
 .navbar {
   
-  color: white;
- /* to vertically align */
+  display: inline-block;
+  margin-right: 10px;
+  text-decoration: none;
+  color: #000; 
+  font-size: 16px; 
+}
+
+.navbar:hover {
+  color: #007bff; 
+}
+
+.navbar-container {
+  position: absolute;
+  top: 0;
+  right: 0;
   display: flex;
-  align-items: center;
- /* push the nav to the right */
-  margin-left: auto;
- /* move it a bit back away from the edge */
-  margin-right: 20px;
-  padding: 15px;
- }
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 10px;
+
+}
+
+
+
 
