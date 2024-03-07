@@ -11,7 +11,7 @@ from requests.exceptions import RequestException
 from models import Flight, Trip, User
 from dotenv import load_dotenv
 from flask.views import MethodView
-from flask_classful import FlaskView, route
+# from flask_classful import FlaskView, route
 
 load_dotenv()  # Take environment variables from .env.
 
@@ -27,6 +27,24 @@ migrate = Migrate(app, db)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
 
 logging.basicConfig(level=logging.DEBUG)
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = User.query.filter_by(username = username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        return jsonify({'user': user.to_dict()})
+    else:
+        return jsonify({'error': 'Invalid username or password'})
+    
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
 
 class FlightAPI(MethodView):
     def get(self):
