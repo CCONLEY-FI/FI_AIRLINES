@@ -12,18 +12,18 @@ const LoginForm = () => {
         navigate("/register")
     }
     function handleSignIn(){
-        navigate("/frontpage", {replace: true})
+        navigate("/homepage", {replace: true})
     }
     return (
         <div className='loginForm'>
             <form action=''>
                 <h1>Login</h1>
                 <div className='input-field'>
-                    <input type='text' placeholder='Username'/>
+                    <input type='text' placeholder='Username'required/>
                     <FaUserAstronaut className='icon' />
                 </div>
                 <div className='input-field'>
-                    <input type='password' placeholder='Password'/>
+                    <input type='password' placeholder='Password'required/>
                     <RiLockPasswordFill className='icon' />
 
                 </div>

@@ -2,13 +2,25 @@ import React from 'react';
 
 const FlightResult = () => {
     return (
-      <div>
-        
-        <div className='flight'>
-          please show me flights that i can track or take to follow the people i tracked
-        </div>
-      </div>
-    );
+      <div className="registerForm">
+      <h1>Book Your Flight</h1>
+      <form>
+          <div className="input-field">
+              <label htmlFor="origin">From</label>
+              <input type="text" id="origin" name="origin" placeholder="Origin" required />
+          </div>
+          <div className="input-field">
+              <label htmlFor="destination">To</label>
+              <input type="text" id="destination" name="destination" placeholder="Destination" required />
+          </div>
+          <div className="input-field">
+              <label htmlFor="date">Departure Date</label>
+              <input type="date" id="date" name="date" required />
+          </div>
+          <button type="submit" className="submit-btn">Save Flight</button>
+      </form>
+  </div>
+);
 };
 
 export default FlightResult;
