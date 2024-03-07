@@ -1,5 +1,5 @@
 import os
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -9,57 +9,39 @@ from faker import Faker
 import random
 from dotenv import load_dotenv
 from flask.views import MethodView
+from flask_restful import Api, Resource
 
+from models import *  # Adjust this line if necessary to fit your project structure
 load_dotenv()  # Take environment variables from .env.
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', "sqlite:///flights.db")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:3000"}})
-
-logging.basicConfig(level=logging.DEBUG)
-fake = Faker()
 
 
+class Flights(Resource):
+  
+  def get(self):
+      flights_list = [i.to_dict() for i in Flight.query.all()]
+      response = make_response(
+        flights_list,
+        200
+      )
+      return response
+api.add_resource(Flights, '/flights')
 
-# Ensure models are imported after db to avoid uninitialized db usage
-from models import Trip, User, Flight  # Adjust this line if necessary to fit your project structure
-
-def generate_fake_flight():
-    flight = Flight(
-        flight_number=fake.bothify(text='???###'),
-        departure_airport=fake.city(),
-        arrival_airport=fake.city(),
-        departure_time=fake.iso8601(),
-        arrival_time=fake.iso8601(),
-        status=random.choice(["On Time", "Delayed", "Cancelled"])
+class Users(Resource):
+  def get(self):
+    user_list = [i.to_dict() for i in User.query.all()]
+    response = make_response(
+      user_list,
+      200
     )
-    db.session.add(flight)
-    db.session.commit()
+    return response
+api.add_resource(Users, '/users')
 
-def populate_db():
-    db.drop_all()
-    db.create_all()
-    for _ in range(10):  # Generate 10 fake flights
-        generate_fake_flight()
-
-# Uncomment the next line if you want to repopulate the database every time the app starts
-# populate_db()
-
-@app.route('/api/flights')
-def get_flights():
-    flights = Flight.query.all()
-    flights_data = [{
-        "flight_number": flight.flight_number,
-        "departure_airport": flight.departure_airport,
-        "arrival_airport": flight.arrival_airport,
-        "departure_time": flight.departure_time,
-        "arrival_time": flight.arrival_time,
-        "status": flight.status
-    } for flight in flights]
-    return jsonify(flights_data)
+class Trips(Resource):
+  def get(self):
+    trip_list = [i.to_dict() for i in Trip.query.all()]
+    return trip_list, 200
+api.add_resource(Trips, '/trips')
 
 @app.route('/login', methods=['POST'])
 def login():

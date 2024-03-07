@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates, relationship
-from extensions import db
+from extensions import *
 from faker import Faker  # Import Faker
 import random
 
