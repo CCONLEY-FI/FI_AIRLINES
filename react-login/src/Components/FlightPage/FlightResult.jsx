@@ -10,6 +10,10 @@ const FlightResult = ({results}) => {
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
     const [departure_date, setDeparture_date] = useState("");
+    const [departure_time, setdeparture_time]= useState("");
+    const [arrival_date, setarrival_date]= useState("");
+    const [arrival_time, setarrival_time]= useState("");
+    const [flight_number,setflight_number]= useState("");
     
       useEffect(() => {
 		fetch('/flights')
@@ -37,6 +41,10 @@ const FlightResult = ({results}) => {
                 origin: origin,
                 destination: destination,
                 departure_date: departure_date,
+                flight_number: flight_number,
+                departure_time:departure_time,
+                arrival_date:arrival_date,
+                arrival_time:arrival_time,
             }),
         })
             .then((response) => {

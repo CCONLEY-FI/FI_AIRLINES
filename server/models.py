@@ -20,10 +20,10 @@ class Flight(db.Model):
     flight_number = db.Column(db.String(100), unique=True, nullable=False)
     origin = db.Column(db.String(100), nullable=False)
     destination = db.Column(db.String(100), nullable=False)
-    departure_date = db.Column(db.Date, nullable=False)
-    departure_time = db.Column(db.Time, nullable=False)
-    arrival_date = db.Column(db.Date, nullable=False)
-    arrival_time = db.Column(db.Time, nullable=False)
+    departure_date = db.Column(db.Date)
+    departure_time = db.Column(db.Time)
+    arrival_date = db.Column(db.Date)
+    arrival_time = db.Column(db.Time)
 
     def to_dict(self):
         return {

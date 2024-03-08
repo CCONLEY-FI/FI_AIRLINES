@@ -1,4 +1,4 @@
-from flask import Flask, abort, jsonify, request,session
+from flask import Flask, abort, jsonify, request,session,make_response
 from extensions import api, bcrypt, db, app
 from models import User, Flight, Trip
 from flask_restful import Resource
@@ -11,7 +11,32 @@ class Flights(Resource):
     def get(self):
         flights_list = [flight.to_dict() for flight in Flight.query.all()]
         return flights_list, 200
-
+    def post(self):
+            data = request.get_json()
+        # try:
+            new_flight = Flight(
+                flight_number=data['flight_number'],
+                origin=data['origin'],
+                destination=data['destination'],
+                departure_date=data['departure_date'],
+                departure_time=data['departure_time'],
+                arrival_date=data['arrival_date'],
+                arrival_time=data['arrival_time']
+            )
+            db.session.add(new_flight)
+            db.session.commit()
+            resp_dict = new_flight.to_dict()
+            
+            response = make_response(
+                resp_dict,
+                201
+            )
+            return response
+        # except Exception as e:
+            # print(e)
+            # return {"error":"e"}, 500
+        
+        
 
 api.add_resource(Flights, '/flights')
 
