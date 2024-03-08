@@ -15,7 +15,7 @@ import Logout from './Components/RegisterForm/Logout';
 function App() {
 
 	const [ results, setResults ] = useState([])
-  const [user, setUser]  = useState({})
+    const [user, setUser]  = useState({})
 	const handleLogin = (username, password) => {
     // Handle login logic here
     console.log('Username:', username);
@@ -40,10 +40,11 @@ function App() {
     <Router>
 		<NavBar />
 		<Routes>
-			<Route path="/" element={<LoginForm user={user} />} />
+			<Route path="/" element={<LoginForm user={user} setUser={setUser}/>} />
 			<Route path="/register" element={<RegisterForm />} />
 			<Route path="/homepage" element={<Homepage results={results} setResults={setResults} />} />
 			<Route path="/flights" element={<FlightPage results={results} />} />
+            <Route path='/logout' element={<Logout />}/>
 		</Routes>
     </Router>
  );

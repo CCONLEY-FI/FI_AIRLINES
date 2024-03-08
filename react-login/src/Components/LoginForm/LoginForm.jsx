@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
 
-const LoginForm = ( isLoggedIn, setIsLoggedIn ) => {
+const LoginForm = ({user, setUser} ) => {
 	const [ username, setUsername ] = useState("")
 	const [ password, setPassword ] = useState("")
 
