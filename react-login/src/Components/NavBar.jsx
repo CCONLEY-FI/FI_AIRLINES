@@ -6,10 +6,11 @@ import { NavLink, Link, Outlet } from "react-router-dom";
 
 
 const NavBar = ({user}) => {
-
+    console.log(user)
     return (
         <div className='navbar-container'>
             <NavLink to='/homepage' className='navbar'>Home</NavLink>
+            
             {/* <Link to='/flights' className='navbar'>Flights</Link> */}
             {user ? 
             <Link to ='/logout' className='navbar'>Logout</Link>

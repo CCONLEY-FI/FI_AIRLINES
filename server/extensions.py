@@ -22,4 +22,6 @@ api = Api(app)
 logging.basicConfig(level=logging.DEBUG)
 fake = Faker()
 
+app.secret_key= "hi!"
+
 # db.init_app(app)

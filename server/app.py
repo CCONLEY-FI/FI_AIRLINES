@@ -46,7 +46,7 @@ class CheckSession(Resource):
     def get(self):
         user_id = session.get('user_id')
         if user_id:
-            user= User.query.filter(User.id == user_id).first()
+            user = User.query.filter(User.id == user_id).first()
             return user.to_dict()
         return {}, 401
 api.add_resource(CheckSession, '/check_session')

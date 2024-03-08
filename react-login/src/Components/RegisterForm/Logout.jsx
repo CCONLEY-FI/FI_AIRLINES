@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Logout = ({user, setUser}) => {
     const Navigate = useNavigate()
+    console.log(setUser)
     
     const [session, setSession] = useState(true)
     function handleSignOut(e){
@@ -18,7 +19,7 @@ const Logout = ({user, setUser}) => {
             }
             else{
                 console.log("clearing user")
-                setUser({})
+                setUser(undefined)
             }
         })
         
