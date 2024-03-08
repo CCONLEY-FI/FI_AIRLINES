@@ -11,6 +11,7 @@ const NavBar = () => {
             <NavLink to='/homepage' className='navbar'>Home</NavLink>
             {/* <Link to='/flights' className='navbar'>Flights</Link> */}
             <Link to='/' className='navbar'>Login</Link>
+            <Link to ='/logout' className='navbar'>Logout</Link>
             <main>
                 <Outlet/>
             </main>

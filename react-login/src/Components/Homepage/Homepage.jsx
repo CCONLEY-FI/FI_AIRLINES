@@ -21,6 +21,9 @@ const Homepage = ({results,setResults}) => {
 		fetch('/flights')
 		.then((r) => r.json())
 		.then((flights) => setAllFlights(flights))
+        .catch((error) => {
+            console.error('Error fetching flights', error);
+        })
 	 }, [])
     const navigate = useNavigate()
     function handleSearchFlights(e){
@@ -82,7 +85,7 @@ const Homepage = ({results,setResults}) => {
                         </div>
                             <button type='submit' >Search Flights</button>
                         </form>
-                        <FlightResultCard results={results}/>
+                        {/* <FlightResultCard results={results}/> */}
                         
                     </div>
                 </div>

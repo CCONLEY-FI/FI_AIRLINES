@@ -14,9 +14,10 @@ const LoginForm = ( isLoggedIn, setIsLoggedIn ) => {
     const handleRegister = () => {
         navigate("/register")
     }
-   
     const handleSubmit = async (e) => {
       e.preventDefault();
+      console.log('Username:', username);
+      console.log('Password:', password);
       try {
           const response = await fetch("/login", {
               method: "POST",
@@ -30,13 +31,22 @@ const LoginForm = ( isLoggedIn, setIsLoggedIn ) => {
 
           const user = await response.json();
           console.log("Login Successful", user);
-		  
+          setUser(user.user)
           navigate("/homepage"); // Redirect after login
       } catch (error) {
           console.error(error.message);
 		  alert("Invalid Credentials")
       }
   };
+    useEffect(() => {
+    fetch('/check_session').then((response) => {
+      if (response.ok) {
+        setUser(user)
+        response.json().then((data) => handleSubmit(data.username, data.password));
+      }
+    });
+ }, []);
+
     return (
         <div className='loginForm'>
             <form onSubmit={handleSubmit}>
@@ -60,10 +70,7 @@ const LoginForm = ( isLoggedIn, setIsLoggedIn ) => {
                 
                 {/* <button type='submit'>Login</button> */}
                 <div className="register"><p>Don't have an account? <a onClick={handleRegister}>Register</a></p></div>
-               
-                
             </form>
-            
 
         </div>
     );
