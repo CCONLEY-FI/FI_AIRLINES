@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+const Logout = ({user, setUser}) => {
     const Navigate = useNavigate()
     
     const [session, setSession] = useState(true)
     function handleSignOut(e){
         e.preventDefault()
         setSession(false)
-        Navigate('/homepage')
+        Navigate('/')
     }
     function clearSession(){
         fetch('/logout', { method: 'DELETE' })
@@ -16,7 +16,12 @@ const Logout = () => {
             if(!res.ok){
                 throw new Error('Logout Error')
             }
+            else{
+                console.log("clearing user")
+                setUser({})
+            }
         })
+        
         .catch(error => {
             console.error("logout failed", error);
         })

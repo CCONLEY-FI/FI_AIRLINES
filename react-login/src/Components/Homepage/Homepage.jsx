@@ -7,7 +7,7 @@ import FlightResult from '../FlightPage/FlightResult';
 import FlightResultCard from '../FlightPage/FlightResultCard';
 import RegisterForm from '../RegisterForm/RegisterForm';
 
-const Homepage = ({results,setResults}) => {
+const Homepage = ({results,setResults, user, setUser}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 	
 	const [ flightOrigin, setFlightOrigin ] = useState("")

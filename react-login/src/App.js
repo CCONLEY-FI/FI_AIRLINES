@@ -38,13 +38,14 @@ function App() {
 
  return (
     <Router>
-		<NavBar />
+		<NavBar user={user}/>
 		<Routes>
 			<Route path="/" element={<LoginForm user={user} setUser={setUser}/>} />
 			<Route path="/register" element={<RegisterForm />} />
-			<Route path="/homepage" element={<Homepage results={results} setResults={setResults} />} />
+			<Route path="/homepage" element={<Homepage results={results} setResults={setResults}
+                                                       user={user} setUser={setUser} />} />
 			<Route path="/flights" element={<FlightPage results={results} />} />
-            <Route path='/logout' element={<Logout />}/>
+            <Route path='/logout' element={<Logout user={user} setuser={setUser}/>}/>
 		</Routes>
     </Router>
  );
