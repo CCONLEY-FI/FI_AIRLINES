@@ -40,7 +40,7 @@ const FlightResult = () => {
               <label htmlFor="date">Departure Date</label>
               <h3 type="date" id="date" name="date"  value={setDepartureDate}>Departure Date</h3>
           </div>
-		  {/* static vars */}
+		  
           <div >
               <label htmlFor="time">Departure Time</label>
               <h3> Departure Time</h3>
@@ -54,10 +54,10 @@ const FlightResult = () => {
               <label htmlFor="flight-number">Flight Number</label>
               <h3> Flight Number</h3>
           </div>
-		  {/* end of static vars*/}
+		  
           <button type="submit" className="submit-btn">Save Flight</button>
       </form>
-      {/* {savedFlightsList} */}
+      
   </div>
 );
 };
