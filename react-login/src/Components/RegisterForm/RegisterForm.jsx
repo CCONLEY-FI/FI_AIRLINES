@@ -47,7 +47,7 @@ const RegisterForm = () => {
     }
     return (
         <div className='registerForm'>
-            <form onSubmit={handleCreateUser} action=''>
+            <form action='' onSubmit={handleCreateUser}>
                 <h1>Create Account</h1>
                 <div className='input-field'>
                     <input type='text' placeholder='Create Username' value={username} onChange={(e) => setUsername(e.target.value)}/>

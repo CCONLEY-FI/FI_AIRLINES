@@ -39,7 +39,7 @@ class Login(Resource):
 api.add_resource(Login, '/login')
 
 
-@app.route('/register', methods=['POST'])
+@app.route('/users', methods=['POST'])
 def register():
     data = request.get_json()
     user = User.query.filter_by(username=data['username']).first()

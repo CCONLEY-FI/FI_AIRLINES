@@ -22,7 +22,7 @@ const Homepage = () => {
 		.then((r) => r.json())
 		.then((flights) => setAllFlights(flights))
 	 }, [])
-    
+    const navigate = useNavigate()
     function handleSearchFlights(e){
 		e.preventDefault()
 		const results = allFlights?.filter((flight) => (
@@ -31,8 +31,16 @@ const Homepage = () => {
 		console.log(results)
 		
 		setResults(results)
+        // if (results.length > 0) {
+        //     navigate('/flights')
+        // }
+        // else if (results.length === 0) {
+        //     alert("No flights found")
+        // }
+        navigate('/flights')
 	}
 	
+
 
     return (
 		<div className='registerForm'>
@@ -53,6 +61,7 @@ const Homepage = () => {
                         </div>
                         <button type='submit'>Search Flights</button>
                     </form>
+                    <FlightResultCard results={results}/>
                 </div>
             ) : (
                 <div>
@@ -70,9 +79,10 @@ const Homepage = () => {
                         <div className='input-field'>
                             <input type='date' placeholder='Date' value={flightDate} onChange={(e) => setFlightDate(e.target.value)} required/>
                         </div>
-                            <button type='submit'>Search Flights</button>
+                            <button type='submit' >Search Flights</button>
                         </form>
-                        <FlightResultCard results={results}/>
+                        {/* <FlightResultCard results={results}/> */}
+                        
                     </div>
                 </div>
             )}

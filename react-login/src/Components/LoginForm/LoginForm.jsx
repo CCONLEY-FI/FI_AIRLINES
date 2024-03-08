@@ -11,7 +11,7 @@ const LoginForm = () => {
         navigate("/register")
     }
     function handleSignIn(){
-        navigate("/frontpage", {replace: true})
+        navigate("/homepage", {replace: true})
     }
     return (
         <div className='loginForm'>
@@ -21,6 +21,10 @@ const LoginForm = () => {
                     <input type='text' placeholder='Username'/>
                     <FaUserAstronaut className='icon' />
                 </div>
+                <div className='input-field'>
+                    <input type='text' placeholder='Password'/>
+                    <RiLockPasswordFill className='icon' />
+                </div>
                 
                 <div className='input-field'>
                     <input type='submit' value='Login' onClick={handleSignIn}/>
@@ -28,7 +32,6 @@ const LoginForm = () => {
                 <div className='remember-me-forget'>
                     <label><input type="checkbox"/>Remember Me</label>
                     <a href='#'>Forget Password</a>
-                    <input type='submit' value='Login' onClick={handleSignIn}/>
                 </div>
                 
                 {/* <button type='submit'>Login</button> */}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect} from 'react';
 import FlightResultCard from './FlightResultCard';
+import { useNavigate } from 'react-router-dom';
 
 const FlightResult = () => {
     
@@ -17,37 +18,41 @@ const FlightResult = () => {
 	 }, [])
 
 	 console.log(allFlights)
+     const navigate = useNavigate()
+     const handleSaveFlight = () => {
+        navigate('/homepage')
+     }
 	
 
     return (
       <div className="registerForm">
       <h1>Book Your Flight</h1>
-      <form>
+      <form onSubmit={handleSaveFlight}>
           <div className="input-field">
               <label htmlFor="origin">From</label>
-              <input type="text" id="origin" name="origin" placeholder="Origin" value={setOrigin} />
+              <h3 type="text" id="origin" name="origin" placeholder="Origin" value={setOrigin}> Origin </h3>
           </div>
           <div className="input-field">
               <label htmlFor="destination">To</label>
-              <input type="text" id="destination" name="destination" placeholder="Destination" value={setDestination} />
+              <h3 type="text" id="destination" name="destination" placeholder="Destination" value={setDestination}>Destination</h3>
           </div>
           <div className="input-field">
               <label htmlFor="date">Departure Date</label>
-              <input type="date" id="date" name="date"  value={setDepartureDate}/>
+              <h3 type="date" id="date" name="date"  value={setDepartureDate}>Departure Date</h3>
           </div>
 		  {/* static vars */}
           <div >
               <label htmlFor="time">Departure Time</label>
-              <h2> Departure Time</h2>
+              <h3> Departure Time</h3>
           </div>
           <div className="input-field">
               <label htmlFor="time">Arrival Time</label>
-              <h2> Arrival Time</h2>
+              <h3> Arrival Time</h3>
           </div>
 		  
           <div className="input-field">
               <label htmlFor="flight-number">Flight Number</label>
-              <h2> Flight Number</h2>
+              <h3> Flight Number</h3>
           </div>
 		  {/* end of static vars*/}
           <button type="submit" className="submit-btn">Save Flight</button>
