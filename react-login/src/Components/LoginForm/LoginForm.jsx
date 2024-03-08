@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
 
-const LoginForm = () => {
+const LoginForm = ( isLoggedIn, setIsLoggedIn ) => {
 	const [ username, setUsername ] = useState("")
 	const [ password, setPassword ] = useState("")
 
@@ -14,9 +14,7 @@ const LoginForm = () => {
     const handleRegister = () => {
         navigate("/register")
     }
-    function handleSignIn(){
-        navigate("/homepage", {replace: true})
-    }
+   
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
@@ -32,6 +30,7 @@ const LoginForm = () => {
 
           const user = await response.json();
           console.log("Login Successful", user);
+		  
           navigate("/homepage"); // Redirect after login
       } catch (error) {
           console.error(error.message);

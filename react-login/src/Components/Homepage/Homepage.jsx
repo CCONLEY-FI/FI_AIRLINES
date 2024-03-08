@@ -7,9 +7,9 @@ import FlightResult from '../FlightPage/FlightResult';
 import FlightResultCard from '../FlightPage/FlightResultCard';
 import RegisterForm from '../RegisterForm/RegisterForm';
 
-const Homepage = () => {
+const Homepage = ({results,setResults}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [ results, setResults ] = useState([])
+	
 	const [ flightOrigin, setFlightOrigin ] = useState("")
     const [ flightArrival, setFlightArrival ] = useState("")
     const [ flightDate, setFlightDate ] = useState("")
@@ -25,8 +25,9 @@ const Homepage = () => {
     const navigate = useNavigate()
     function handleSearchFlights(e){
 		e.preventDefault()
+        console.log(allFlights)
 		const results = allFlights?.filter((flight) => (
-			flight.destination.includes(flightArrival) && flight.origin.includes(flightOrigin) && flight.departure_date.includes(flightDate)
+			flight.destination.toLowerCase().includes(flightArrival.toLowerCase()) && flight.origin.toLowerCase().includes(flightOrigin.toLowerCase()) && flight.departure_date.toLowerCase().includes(flightDate.toLowerCase())
 		))
 		console.log(results)
 		

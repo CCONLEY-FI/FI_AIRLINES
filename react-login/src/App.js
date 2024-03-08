@@ -12,20 +12,21 @@ import NavBar from './Components/NavBar';
 
 function App() {
 
- const handleLogin = (username, password) => {
+	const [ results, setResults ] = useState([])
+	const handleLogin = (username, password) => {
     // Handle login logic here
     console.log('Username:', username);
     console.log('Password:', password);
- };
-
- useEffect(() => {
-    fetch('/check_session').then((response) => {
-      if (response.ok) {
-        response.json().then((data) => handleLogin(data.username, data.password));
-      }
-    });
- }, []);
- 
+ 	};
+    console.log(results)
+    useEffect(() => {
+        fetch('/check_session').then((response) => {
+            if (response.ok) {
+                response.json().then((data) => handleLogin(data.username, data.password));
+            }
+        });
+    }, []);
+    
  
 
 //  const results = allFlights?.filter((flight) => (
@@ -34,13 +35,13 @@ function App() {
 
  return (
     <Router>
-      <NavBar />
-      <Routes>
-        <Route path="/" element={<LoginForm onLogin={handleLogin} />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/homepage" element={<Homepage />} />
-        <Route path="/flights" element={<FlightPage />} />
-      </Routes>
+		<NavBar />
+		<Routes>
+			<Route path="/" element={<LoginForm onLogin={handleLogin} />} />
+			<Route path="/register" element={<RegisterForm />} />
+			<Route path="/homepage" element={<Homepage results={results} setResults={setResults} />} />
+			<Route path="/flights" element={<FlightPage results={results} />} />
+		</Routes>
     </Router>
  );
 }

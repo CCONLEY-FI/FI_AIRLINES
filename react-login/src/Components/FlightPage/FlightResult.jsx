@@ -2,22 +2,20 @@ import React from 'react';
 import { useState, useEffect} from 'react';
 import FlightResultCard from './FlightResultCard';
 import { useNavigate } from 'react-router-dom';
+import Homepage from '../Homepage/Homepage';
 
-const FlightResult = () => {
+const FlightResult = ({results}) => {
     
-    const [ origin, setOrigin ] = useState("")
-    const [ destination, setDestination ] = useState("")
-    const [ departureDate, setDepartureDate ] = useState("")
-    const [ allFlights, setAllFlights ] = useState([])
-
     
-    useEffect(() => {
-		fetch('/flights')
-		.then((r) => r.json())
-		.then((flights) => setAllFlights(flights))
-	 }, [])
+    // const [ allFlights, setAllFlights ] = useState([])
+    
+    //   useEffect(() => {
+	// 	fetch('/flights')
+	// 	.then((r) => r.json())
+	// 	.then((flights) => setAllFlights(flights))
+	//  }, [])
 
-	 console.log(allFlights)
+	//  console.log(allFlights)
      const navigate = useNavigate()
      const handleSaveFlight = () => {
         navigate('/homepage')
@@ -30,29 +28,32 @@ const FlightResult = () => {
       <form onSubmit={handleSaveFlight}>
           <div className="input-field">
               <label htmlFor="origin">From</label>
-              <h3 type="text" id="origin" name="origin" placeholder="Origin" value={setOrigin}> Origin </h3>
+              <h3> {`${results[0]?.origin}`} </h3>
           </div>
           <div className="input-field">
               <label htmlFor="destination">To</label>
-              <h3 type="text" id="destination" name="destination" placeholder="Destination" value={setDestination}>Destination</h3>
+              <h3>{`${results[0]?.destination}`}</h3>
           </div>
           <div className="input-field">
               <label htmlFor="date">Departure Date</label>
-              <h3 type="date" id="date" name="date"  value={setDepartureDate}>Departure Date</h3>
+              <h3>{`${results[0]?.departure_date}`}</h3>
           </div>
-		  
+		  <div className="input-field">
+              <label htmlFor="time">Arrival date</label>
+              <h3>{`${results[0].arrival_date}`} </h3>
+          </div>
           <div >
               <label htmlFor="time">Departure Time</label>
-              <h3> Departure Time</h3>
+              <h3> {`${results[0].departure_time}`}</h3>
           </div>
           <div className="input-field">
               <label htmlFor="time">Arrival Time</label>
-              <h3> Arrival Time</h3>
+              <h3>{`${results[0].arrival_time}`} </h3>
           </div>
 		  
           <div className="input-field">
               <label htmlFor="flight-number">Flight Number</label>
-              <h3> Flight Number</h3>
+              <h3> {`${results[0].flight_number}`}</h3>
           </div>
 		  
           <button type="submit" className="submit-btn">Save Flight</button>
