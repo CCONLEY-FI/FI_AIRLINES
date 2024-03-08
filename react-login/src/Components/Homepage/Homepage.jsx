@@ -81,7 +81,7 @@ const Homepage = () => {
                         </div>
                             <button type='submit' >Search Flights</button>
                         </form>
-                        {/* <FlightResultCard results={results}/> */}
+                        <FlightResultCard results={results}/>
                         
                     </div>
                 </div>
