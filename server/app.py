@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,session
 from extensions import api, bcrypt, db, app
 from models import User, Flight, Trip
 from flask_restful import Resource
@@ -37,6 +37,19 @@ class Login(Resource):
 
 # Register the Login resource
 api.add_resource(Login, '/login')
+class Logout(Resource):
+    def delete(self):
+        session['user_id'] = None
+        return {}, 204
+api.add_resource(Logout, '/logout')
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if user_id:
+            user= User.query.filter(User.id == user_id).first()
+            return user.to_dict()
+        return {}, 401
+api.add_resource(CheckSession, '/check_session')
 
 
 @app.route('/users', methods=['POST'])
