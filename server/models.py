@@ -50,3 +50,13 @@ class Trip(db.Model):
 
     user = relationship('User', back_populates='trips')
     flight = relationship('Flight')
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "flight_id": self.flight_id,
+            "details": self.details,
+            "created_at": self.created_at.isoformat(),
+            "trip_notes": self.trip_notes
+        }

@@ -5,21 +5,55 @@ import { useNavigate } from 'react-router-dom';
 import Homepage from '../Homepage/Homepage';
 
 const FlightResult = ({results}) => {
+    const [trips, setTrips] = useState([]);
+    const [allFlights, setAllFlights] = useState([]);
+    const [origin, setOrigin] = useState("");
+    const [destination, setDestination] = useState("");
+    const [departure_date, setDeparture_date] = useState("");
     
-    
-    // const [ allFlights, setAllFlights ] = useState([])
-    
-    //   useEffect(() => {
-	// 	fetch('/flights')
-	// 	.then((r) => r.json())
-	// 	.then((flights) => setAllFlights(flights))
-	//  }, [])
+      useEffect(() => {
+		fetch('/flights')
+		.then((r) => r.json())
+		.then((flights) => setAllFlights(flights))
+	 }, [])
 
-	//  console.log(allFlights)
+	 console.log(allFlights)
+
+    useEffect(() => {
+        fetch("/trips")
+        .then((r) => r.json())
+        .then((trips) => setTrips(trips))
+        .catch((error) => console.error("Failed to fetch trips:", error))
+    }, []);
      const navigate = useNavigate()
-     const handleSaveFlight = () => {
-        navigate('/homepage')
-     }
+     const handleSaveFlight = (e) => {
+        e.preventDefault();
+        fetch("/flights", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                origin: origin,
+                destination: destination,
+                departure_date: departure_date,
+            }),
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to save flight");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                alert("Flight saved successfully");
+                navigate("/homepage");
+            })
+            .catch((error) => {
+                console.error("Error saving flight:", error);
+                alert(error.message);
+            });
+    };
 	
 
     return (
