@@ -1,6 +1,14 @@
-from extensions import db  # Ensure circular imports are resolved
+from extensions import db
 from datetime import datetime
 from sqlalchemy.orm import relationship
+
+trip_flight_association_table = db.Table(
+    'trip_flight',
+    db.Column('trip_id', db.Integer, db.ForeignKey(
+        'trips.id'), primary_key=True),
+    db.Column('flight_id', db.Integer, db.ForeignKey(
+        'flights.id'), primary_key=True)
+)
 
 
 class User(db.Model):
@@ -24,6 +32,8 @@ class Flight(db.Model):
     departure_time = db.Column(db.Time)
     arrival_date = db.Column(db.Date)
     arrival_time = db.Column(db.Time)
+    trips = db.relationship(
+        'Trip', secondary=trip_flight_association_table, back_populates='flights')
 
     def to_dict(self):
         return {
@@ -41,22 +51,24 @@ class Flight(db.Model):
 class Trip(db.Model):
     __tablename__ = 'trips'
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    flight_id = db.Column(db.Integer, db.ForeignKey(
-        'flights.id'), nullable=False)
     details = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     trip_notes = db.Column(db.String(255), nullable=True)
-
     user = relationship('User', back_populates='trips')
-    flight = relationship('Flight')
-
+    flights = db.relationship(
+        'Flight', secondary=trip_flight_association_table, back_populates='trips')
+    
     def to_dict(self):
+        flight_details = [
+            {'id': flight.id, 'flight_number': flight.flight_number} for flight in self.flights]
         return {
             "id": self.id,
+            "name": self.name,
             "user_id": self.user_id,
-            "flight_id": self.flight_id,
             "details": self.details,
             "created_at": self.created_at.isoformat(),
-            "trip_notes": self.trip_notes
+            "trip_notes": self.trip_notes,
+            "flights": flight_details
         }
